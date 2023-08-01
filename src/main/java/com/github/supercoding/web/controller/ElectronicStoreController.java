@@ -1,5 +1,7 @@
 package com.github.supercoding.web.controller;
 
+import com.github.supercoding.repository.ElectronicStoreItemRepository;
+import com.github.supercoding.repository.ItemEntity;
 import com.github.supercoding.web.dto.Item;
 import com.github.supercoding.web.dto.ItemBody;
 import org.springframework.web.bind.annotation.*;
@@ -13,31 +15,38 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class ElectronicStoreController {
 
+    public ElectronicStoreController(ElectronicStoreItemRepository electronicStoreItemRepository) {
+        this.electronicStoreItemRepository = electronicStoreItemRepository;
+    }
+
+    private ElectronicStoreItemRepository electronicStoreItemRepository;
+
     private static int serialItemId = 1;
     private List<Item> items = new ArrayList<>();
 
     @GetMapping("/items")
     public List<Item> findAllItem(){
-        return items;
+        List<ItemEntity> itemEntities = electronicStoreItemRepository.findAllItems();
+        return itemEntities.stream().map(Item::new).collect(Collectors.toList());
     }
 
     @GetMapping("/items/{id}")
     public Item findItemByPathId(@PathVariable String id){//items/1
-        Item itemFounded = items.stream()
-                .filter((item->item.getId().equals(id)))
-                .findFirst()
-                .orElseThrow(()-> new RuntimeException());
-
+//        Item itemFounded = items.stream()
+//                .filter((item->item.getId().equals(id)))
+//                .findFirst()
+//                .orElseThrow(()-> new RuntimeException());
+        Item itemFounded = electronicStoreItemRepository.findItemById(id);
         return itemFounded;
     }
 
     @GetMapping("/items-query")
     public Item findItemByQuery(@RequestParam("id") String id){ //items-query?id=1
-        Item itemFounded = items.stream()
-                .filter((item->item.getId().equals(id)))
-                .findFirst()
-                .orElseThrow(()-> new RuntimeException());
-
+//        Item itemFounded = items.stream()
+//                .filter((item->item.getId().equals(id)))
+//                .findFirst()
+//                .orElseThrow(()-> new RuntimeException());
+        Item itemFounded = electronicStoreItemRepository.findItemById(id);
         return itemFounded;
     }
 
@@ -55,9 +64,12 @@ public class ElectronicStoreController {
 
     @PostMapping("/items")
     public String registerItem(@RequestBody ItemBody itemBody) {
-        Item newItem = new Item(serialItemId++, itemBody);
-        items.add(newItem);
-        return "ID: "+newItem.getId();
+//        Item newItem = new Item(serialItemId++, itemBody);
+//        items.add(newItem);
+        ItemEntity itemEntity = new ItemEntity(null, itemBody.getName(), itemBody.getType(), itemBody.getPrice(),
+                itemBody.getSpec().getCpu(), itemBody.getSpec().getCapacity());
+        Integer itemId = electronicStoreItemRepository.saveItem(itemEntity);
+        return "ID: "+itemId;
     }
 
     @DeleteMapping("/items/{id}")
@@ -76,16 +88,20 @@ public class ElectronicStoreController {
 
         //자바 내부에서 수정 -> 없애고 다시 넣는 게 나음.
         //일반적으로는 해당하는 것 찾아서 수정하고 저장하기기
-       Item itemFounded = items.stream()
-                .filter((item->item.getId().equals(id)))
-                .findFirst()
-                .orElseThrow(()-> new RuntimeException());
+//       Item itemFounded = items.stream()
+//                .filter((item->item.getId().equals(id)))
+//                .findFirst()
+//                .orElseThrow(()-> new RuntimeException());
+//
+//        items.remove(itemFounded);
+//
+//        Item itemUpdated = new Item(Integer.valueOf(id), itemBody);
+//        items.add(itemUpdated);
 
-        items.remove(itemFounded);
-
-        Item itemUpdated = new Item(Integer.valueOf(id), itemBody);
-        items.add(itemUpdated);
-
+        Integer idInt = Integer.valueOf(id);
+        ItemEntity itemEntity = new ItemEntity(idInt, itemBody.getName(), itemBody.getType(), itemBody.getPrice(), itemBody.getSpec().getCpu(), itemBody.getSpec().getCpu());
+        ItemEntity itemEntityUpdated = electronicStoreItemRepository.updateItemEntity(idInt, itemEntity);
+        Item itemUpdated = new Item(itemEntityUpdated);
         return itemUpdated;
     }
 }
