@@ -17,7 +17,7 @@ public class JdbcConfig {
         dataSource.setUsername("root");
         dataSource.setPassword("1976128");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/supercoding");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/chapter_96");
         return dataSource;
     }
 

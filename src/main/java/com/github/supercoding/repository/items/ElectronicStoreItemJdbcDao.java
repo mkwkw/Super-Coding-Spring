@@ -1,13 +1,11 @@
-package com.github.supercoding.repository;
+package com.github.supercoding.repository.items;
 
 import com.github.supercoding.web.dto.Item;
-import com.github.supercoding.web.dto.ItemBody;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ElectronicStoreItemJdbcDao implements ElectronicStoreItemRepository{
@@ -20,6 +18,8 @@ public class ElectronicStoreItemJdbcDao implements ElectronicStoreItemRepository
                     rs.getNString("name"),
                     rs.getNString("type"),
                     rs.getInt("price"),
+                    rs.getInt("store_id"),
+                    rs.getInt("stock"),
                     rs.getNString("cpu"),
                     rs.getNString("capacity")
             )
@@ -58,14 +58,18 @@ public class ElectronicStoreItemJdbcDao implements ElectronicStoreItemRepository
     }
 
     @Override
-    public Item findItemById(String id) {
+    public ItemEntity findItemById(String id) {
         ItemEntity itemEntity = jdbcTemplate.queryForObject("SELECT * FROM item WHERE id = ?", itemEntityRowMapper, id);
-        Item item = new Item(itemEntity);
-        return item;
+        return itemEntity;
     }
 
     @Override
     public void deleteItem(Integer id) {
         jdbcTemplate.update("DELETE FROM item WHERE id=?", itemEntityRowMapper, id);
+    }
+
+    @Override
+    public void updateItemStock(Integer itemId, Integer newStock) {
+        jdbcTemplate.update("UPDATE item SET stock = ? WHERE id = ?", newStock, itemId);
     }
 }
