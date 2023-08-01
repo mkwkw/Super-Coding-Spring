@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Repository
 public class ElectronicStoreItemJdbcDao implements ElectronicStoreItemRepository{
 
+
     private JdbcTemplate jdbcTemplate;
     static RowMapper<ItemEntity> itemEntityRowMapper = ((rs, rowNum) ->
             new ItemEntity(
@@ -61,6 +62,10 @@ public class ElectronicStoreItemJdbcDao implements ElectronicStoreItemRepository
         ItemEntity itemEntity = jdbcTemplate.queryForObject("SELECT * FROM item WHERE id = ?", itemEntityRowMapper, id);
         Item item = new Item(itemEntity);
         return item;
+    }
 
+    @Override
+    public void deleteItem(Integer id) {
+        jdbcTemplate.update("DELETE FROM item WHERE id=?", itemEntityRowMapper, id);
     }
 }

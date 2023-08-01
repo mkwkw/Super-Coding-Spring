@@ -2,6 +2,7 @@ package com.github.supercoding.web.controller;
 
 import com.github.supercoding.repository.ElectronicStoreItemRepository;
 import com.github.supercoding.repository.ItemEntity;
+import com.github.supercoding.service.ElectronicStoreItemService;
 import com.github.supercoding.web.dto.Item;
 import com.github.supercoding.web.dto.ItemBody;
 import org.springframework.web.bind.annotation.*;
@@ -15,19 +16,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class ElectronicStoreController {
 
-    public ElectronicStoreController(ElectronicStoreItemRepository electronicStoreItemRepository) {
-        this.electronicStoreItemRepository = electronicStoreItemRepository;
+    private ElectronicStoreItemService electronicStoreItemService;
+
+    public ElectronicStoreController(ElectronicStoreItemService electronicStoreItemService) {
+        this.electronicStoreItemService = electronicStoreItemService;
     }
-
-    private ElectronicStoreItemRepository electronicStoreItemRepository;
-
-    private static int serialItemId = 1;
-    private List<Item> items = new ArrayList<>();
 
     @GetMapping("/items")
     public List<Item> findAllItem(){
-        List<ItemEntity> itemEntities = electronicStoreItemRepository.findAllItems();
-        return itemEntities.stream().map(Item::new).collect(Collectors.toList());
+        return electronicStoreItemService.findAllItems();
     }
 
     @GetMapping("/items/{id}")
@@ -36,8 +33,7 @@ public class ElectronicStoreController {
 //                .filter((item->item.getId().equals(id)))
 //                .findFirst()
 //                .orElseThrow(()-> new RuntimeException());
-        Item itemFounded = electronicStoreItemRepository.findItemById(id);
-        return itemFounded;
+        return electronicStoreItemService.findItemById(id);
     }
 
     @GetMapping("/items-query")
@@ -46,41 +42,36 @@ public class ElectronicStoreController {
 //                .filter((item->item.getId().equals(id)))
 //                .findFirst()
 //                .orElseThrow(()-> new RuntimeException());
-        Item itemFounded = electronicStoreItemRepository.findItemById(id);
-        return itemFounded;
+        return electronicStoreItemService.findItemById(id);
     }
 
     @GetMapping("/items-queries")
     public List<Item> findItemByQueryIds(@RequestParam("id") List<String> ids){ //items-queries?id=1&id=2&id=3
 
-        Set<String> idSet = ids.stream().collect(Collectors.toSet());
 
-        List<Item> itemsFound = items.stream()
-                .filter(item ->idSet.contains(item.getId()))
-                .collect(Collectors.toList());
+//        Set<String> idSet = ids.stream().collect(Collectors.toSet());
+//
+//        List<Item> itemsFound = items.stream()
+//                .filter(item ->idSet.contains(item.getId()))
+//                .collect(Collectors.toList());
 
-        return itemsFound;
+        return electronicStoreItemService.findItemsByIds(ids);
     }
 
     @PostMapping("/items")
     public String registerItem(@RequestBody ItemBody itemBody) {
 //        Item newItem = new Item(serialItemId++, itemBody);
 //        items.add(newItem);
-        ItemEntity itemEntity = new ItemEntity(null, itemBody.getName(), itemBody.getType(), itemBody.getPrice(),
-                itemBody.getSpec().getCpu(), itemBody.getSpec().getCapacity());
-        Integer itemId = electronicStoreItemRepository.saveItem(itemEntity);
+        Integer itemId = electronicStoreItemService.saveItem(itemBody);
+
         return "ID: "+itemId;
     }
 
     @DeleteMapping("/items/{id}")
     public String deleteItemById(@PathVariable String id){
-        Item itemFounded = items.stream()
-                .filter((item->item.getId().equals(id)))
-                .findFirst()
-                .orElseThrow(()-> new RuntimeException());
 
-        items.remove(itemFounded);
-        return "Object with id = "+itemFounded.getId()+" has been deleted";
+        electronicStoreItemService.deleteItem(id);
+        return "Object with id = "+id+" has been deleted";
     }
 
     @PutMapping("/items/{id}")
@@ -98,10 +89,7 @@ public class ElectronicStoreController {
 //        Item itemUpdated = new Item(Integer.valueOf(id), itemBody);
 //        items.add(itemUpdated);
 
-        Integer idInt = Integer.valueOf(id);
-        ItemEntity itemEntity = new ItemEntity(idInt, itemBody.getName(), itemBody.getType(), itemBody.getPrice(), itemBody.getSpec().getCpu(), itemBody.getSpec().getCpu());
-        ItemEntity itemEntityUpdated = electronicStoreItemRepository.updateItemEntity(idInt, itemEntity);
-        Item itemUpdated = new Item(itemEntityUpdated);
-        return itemUpdated;
+
+        return electronicStoreItemService.updateItem(id, itemBody);
     }
 }

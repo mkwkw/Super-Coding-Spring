@@ -13,4 +13,6 @@ public interface ElectronicStoreItemRepository {
     Item findItemById(String id);
 
     ItemEntity updateItemEntity(Integer idInt, ItemEntity itemEntity);
+
+    void deleteItem(Integer idInt);
 }
