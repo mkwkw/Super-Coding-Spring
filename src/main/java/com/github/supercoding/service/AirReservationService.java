@@ -24,13 +24,13 @@ public class AirReservationService {
     private UserRepository userRepository;
     private AirlineTicketRepository airlineTicketRepository;
 
-    private PassengerRepository passengerReposiotry;
+    private PassengerRepository passengerRepository;
     private ReservationRepository reservationRepository;
 
-    public AirReservationService(UserRepository userRepository, AirlineTicketRepository airlineTicketRepository, PassengerRepository passengerReposiotry, ReservationRepository reservationRepository) {
+    public AirReservationService(UserRepository userRepository, AirlineTicketRepository airlineTicketRepository, PassengerRepository passengerRepository, ReservationRepository reservationRepository) {
         this.userRepository = userRepository;
         this.airlineTicketRepository = airlineTicketRepository;
-        this.passengerReposiotry = passengerReposiotry;
+        this.passengerRepository = passengerRepository;
         this.reservationRepository = reservationRepository;
     }
 
@@ -58,10 +58,10 @@ public class AirReservationService {
         Integer airlineTicketId= reservationRequest.getAirlineTicketId();
 
         // 1. Passenger I
-        Passenger passenger = passengerReposiotry.findPassengerByUserId(userId);
+        Passenger passenger = passengerRepository.findPassengerByUserId(userId);
         Integer passengerId= passenger.getPassengerId();
 
-        // 2. price 등의 정보 불러오기
+        // 2. price 등의 정보 불러오기 - airline_ticket과 flight 테이블 Join 이용
         List<AirlineTicketAndFlightInfo> airlineTicketAndFlightInfos
                 = airlineTicketRepository.findAllAirLineTicketAndFlightInfo(airlineTicketId);
 

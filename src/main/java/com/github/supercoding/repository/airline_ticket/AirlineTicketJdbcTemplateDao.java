@@ -45,6 +45,7 @@ public class AirlineTicketJdbcTemplateDao implements AirlineTicketRepository{
                 "WHERE arrival_loc = ? AND ticket_type = ?", airlineTicketRowMapper, likePlace, ticketType);
     }
 
+    //Join - flight테이블과 airline_ticket테이블 조인해서 ticketId, tax, totalPrice, flightPrice, charge 가져오기
     @Override
     public List<AirlineTicketAndFlightInfo> findAllAirLineTicketAndFlightInfo(Integer airlineTicketId) {
         return jdbcTemplate.query("SELECT A.ticket_id, A.tax, A.total_price, F.flight_price, F.charge " +
