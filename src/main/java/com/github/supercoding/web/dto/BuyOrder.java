@@ -1,23 +1,14 @@
 package com.github.supercoding.web.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
 public class BuyOrder {
 
     private Integer itemId;
     private Integer itemNums;
 
-    public BuyOrder() {
-    }
-
-    public BuyOrder(Integer itemId, Integer itemNums) {
-        this.itemId = itemId;
-        this.itemNums = itemNums;
-    }
-
-    public Integer getItemId() {
-        return itemId;
-    }
-
-    public Integer getItemNums() {
-        return itemNums;
-    }
 }

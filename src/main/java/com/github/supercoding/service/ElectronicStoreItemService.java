@@ -7,6 +7,7 @@ import com.github.supercoding.repository.storeSales.StoreSalesRepository;
 import com.github.supercoding.web.dto.BuyOrder;
 import com.github.supercoding.web.dto.Item;
 import com.github.supercoding.web.dto.ItemBody;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,15 +16,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ElectronicStoreItemService {
 
-    private ElectronicStoreItemRepository electronicStoreItemRepository;
-    private StoreSalesRepository storeSalesRepository;
+    private final ElectronicStoreItemRepository electronicStoreItemRepository;
+    private final StoreSalesRepository storeSalesRepository;
 
-    public ElectronicStoreItemService(ElectronicStoreItemRepository electronicStoreItemRepository, StoreSalesRepository storeSalesRepository) {
-        this.electronicStoreItemRepository = electronicStoreItemRepository;
-        this.storeSalesRepository = storeSalesRepository;
-    }
+//    public ElectronicStoreItemService(ElectronicStoreItemRepository electronicStoreItemRepository, StoreSalesRepository storeSalesRepository) {
+//        this.electronicStoreItemRepository = electronicStoreItemRepository;
+//        this.storeSalesRepository = storeSalesRepository;
+//    }
 
     public List<Item> findAllItems() {
         List<ItemEntity> itemEntities = electronicStoreItemRepository.findAllItems();

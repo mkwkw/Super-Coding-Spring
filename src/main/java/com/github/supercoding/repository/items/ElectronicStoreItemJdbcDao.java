@@ -1,5 +1,7 @@
 package com.github.supercoding.repository.items;
 
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,19 +12,32 @@ import java.util.List;
 @Repository
 public class ElectronicStoreItemJdbcDao implements ElectronicStoreItemRepository{
 
+    private final JdbcTemplate jdbcTemplate;
 
-    private JdbcTemplate jdbcTemplate;
+    //RowMapper로 구현하면 필드 순서와 DAO에서의 순서를 일일이 비교해야함.
+    //Builder로 해결
     static RowMapper<ItemEntity> itemEntityRowMapper = ((rs, rowNum) ->
-            new ItemEntity(
-                    rs.getInt("id"),
-                    rs.getNString("name"),
-                    rs.getNString("type"),
-                    rs.getInt("price"),
-                    rs.getInt("store_id"),
-                    rs.getInt("stock"),
-                    rs.getNString("cpu"),
-                    rs.getNString("capacity")
-            )
+//            new ItemEntity(
+//                    rs.getInt("id"),
+//                    rs.getNString("name"),
+//                    rs.getNString("type"),
+//                    rs.getInt("price"),
+//                    rs.getInt("store_id"),
+//                    rs.getInt("stock"),
+//                    rs.getNString("cpu"),
+//                    rs.getNString("capacity")
+//            )
+            new ItemEntity.ItemEntityBuilder()
+                    .id(rs.getInt("id"))
+                    .name( rs.getNString("name"))
+                    .type(rs.getNString("type"))
+                    .stock(rs.getInt("stock"))
+                    .capacity(rs.getNString("capacity"))
+                    .cpu(rs.getNString("cpu"))
+                    .price( rs.getInt("price"))
+                    .storeId(rs.getInt("store_id"))
+                    .build()
+
     );
 
     //템플릿 지정

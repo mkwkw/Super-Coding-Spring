@@ -1,5 +1,14 @@
 package com.github.supercoding.web.dto;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Data
 public class ItemBody {
 
     private String id;
@@ -8,26 +17,4 @@ public class ItemBody {
     private Integer price;
     private Spec spec;
 
-    public ItemBody() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public Spec getSpec() {
-        return spec;
-    }
 }

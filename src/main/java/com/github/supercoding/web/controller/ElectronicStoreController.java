@@ -4,19 +4,21 @@ import com.github.supercoding.service.ElectronicStoreItemService;
 import com.github.supercoding.web.dto.BuyOrder;
 import com.github.supercoding.web.dto.Item;
 import com.github.supercoding.web.dto.ItemBody;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ElectronicStoreController {
 
-    private ElectronicStoreItemService electronicStoreItemService;
+    private final ElectronicStoreItemService electronicStoreItemService; //@RequiredArgsConstructor로 생성자 따로 코드 작성 없이 Bean 주입 가능
 
-    public ElectronicStoreController(ElectronicStoreItemService electronicStoreItemService) {
-        this.electronicStoreItemService = electronicStoreItemService;
-    }
+//    public ElectronicStoreController(ElectronicStoreItemService electronicStoreItemService) {
+//        this.electronicStoreItemService = electronicStoreItemService;
+//    }
 
     @GetMapping("/items")
     public List<Item> findAllItem(){

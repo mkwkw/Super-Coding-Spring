@@ -16,11 +16,12 @@ public class StoreSalesJdbcTemplateDao implements StoreSalesRepository{
 
     //테이블 컬럼 이름과 연결
     static RowMapper<StoreSalesEntity> storeSalesEntityRowMapper = ((rs, rowNum) ->
-            new StoreSalesEntity(
-                    rs.getInt("id"),
-                    rs.getNString("store_name"),
-                    rs.getInt("amount")
-            ));
+            new StoreSalesEntity.StoreSalesEntityBuilder()
+                    .id(rs.getInt("id"))
+                    .storeName(rs.getNString("store_name"))
+                    .amount(rs.getInt("amount"))
+                    .build()
+            );
 
     @Override
     public StoreSalesEntity findStoreSalesById(Integer storeId) {
