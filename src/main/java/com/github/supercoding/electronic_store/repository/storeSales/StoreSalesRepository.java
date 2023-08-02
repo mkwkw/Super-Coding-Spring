@@ -1,4 +1,4 @@
-package com.github.supercoding.repository.storeSales;
+package com.github.supercoding.electronic_store.repository.storeSales;
 
 public interface StoreSalesRepository {
     StoreSalesEntity findStoreSalesById(Integer storeId);

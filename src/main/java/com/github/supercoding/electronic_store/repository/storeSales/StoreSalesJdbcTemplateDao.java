@@ -1,6 +1,5 @@
-package com.github.supercoding.repository.storeSales;
+package com.github.supercoding.electronic_store.repository.storeSales;
 
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

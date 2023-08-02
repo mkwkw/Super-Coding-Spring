@@ -1,6 +1,4 @@
-package com.github.supercoding.repository.items;
-
-import com.github.supercoding.web.dto.Item;
+package com.github.supercoding.electronic_store.repository.items;
 
 import java.util.List;
 

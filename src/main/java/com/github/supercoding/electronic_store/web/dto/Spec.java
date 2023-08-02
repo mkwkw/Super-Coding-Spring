@@ -1,4 +1,4 @@
-package com.github.supercoding.web.dto;
+package com.github.supercoding.electronic_store.web.dto;
 
 public class Spec {
     private String cpu;

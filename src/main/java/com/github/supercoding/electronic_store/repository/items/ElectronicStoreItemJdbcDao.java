@@ -1,6 +1,5 @@
-package com.github.supercoding.repository.items;
+package com.github.supercoding.electronic_store.repository.items;
 
-import com.github.supercoding.web.dto.Item;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

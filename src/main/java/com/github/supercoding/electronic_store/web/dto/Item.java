@@ -1,6 +1,6 @@
-package com.github.supercoding.web.dto;
+package com.github.supercoding.electronic_store.web.dto;
 
-import com.github.supercoding.repository.items.ItemEntity;
+import com.github.supercoding.electronic_store.repository.items.ItemEntity;
 
 import java.util.Objects;
 
