@@ -1,4 +1,4 @@
-package com.github.supercoding.electronic_store.repository.items;
+package com.github.supercoding.repository.items;
 
 import java.util.Objects;
 

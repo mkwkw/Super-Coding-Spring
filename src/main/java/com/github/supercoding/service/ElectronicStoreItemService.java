@@ -1,12 +1,12 @@
-package com.github.supercoding.electronic_store.service;
+package com.github.supercoding.service;
 
-import com.github.supercoding.electronic_store.repository.items.ElectronicStoreItemRepository;
-import com.github.supercoding.electronic_store.repository.items.ItemEntity;
-import com.github.supercoding.electronic_store.repository.storeSales.StoreSalesEntity;
-import com.github.supercoding.electronic_store.repository.storeSales.StoreSalesRepository;
-import com.github.supercoding.electronic_store.web.dto.BuyOrder;
-import com.github.supercoding.electronic_store.web.dto.Item;
-import com.github.supercoding.electronic_store.web.dto.ItemBody;
+import com.github.supercoding.repository.items.ElectronicStoreItemRepository;
+import com.github.supercoding.repository.items.ItemEntity;
+import com.github.supercoding.repository.storeSales.StoreSalesEntity;
+import com.github.supercoding.repository.storeSales.StoreSalesRepository;
+import com.github.supercoding.web.dto.BuyOrder;
+import com.github.supercoding.web.dto.Item;
+import com.github.supercoding.web.dto.ItemBody;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +64,7 @@ public class ElectronicStoreItemService {
         return itemUpdated;
     }
 
-    @Transactional
+    @Transactional(transactionManager = "tm1")
     public Integer buyItems(BuyOrder buyOrder){
         // 1. BuyOrder 에서 상품 ID와 수량을 얻어낸다.
         // 2. 상품을 조회하여 수량이 얼마나 있는 지 확인한다.
