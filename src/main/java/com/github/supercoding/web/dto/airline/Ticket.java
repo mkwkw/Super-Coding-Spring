@@ -3,10 +3,16 @@ package com.github.supercoding.web.dto.airline;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.github.supercoding.repository.airline_ticket.AirlineTicket;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.format.DateTimeFormatter;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Getter
+@Setter
+@NoArgsConstructor
 public class Ticket {
 
     private String depart;
@@ -14,9 +20,6 @@ public class Ticket {
     private String departureTime;
     private String returnTime;
     private Integer ticketId;
-
-    public Ticket() {
-    }
 
     //DB에 저장할 날짜, 시간 형식 지정 (LocalDateTime -> String)
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -29,23 +32,4 @@ public class Ticket {
 
     }
 
-    public String getDepart() {
-        return depart;
-    }
-
-    public String getArrival() {
-        return arrival;
-    }
-
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    public String getReturnTime() {
-        return returnTime;
-    }
-
-    public Integer getTicketId() {
-        return ticketId;
-    }
 }
