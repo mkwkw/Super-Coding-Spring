@@ -1,13 +1,15 @@
 package com.github.supercoding.web.dto;
 
 import com.github.supercoding.repository.items.ItemEntity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Objects;
 
 @Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Item {
 
     private String id;

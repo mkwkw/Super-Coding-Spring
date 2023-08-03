@@ -5,6 +5,8 @@ import com.github.supercoding.web.dto.BuyOrder;
 import com.github.supercoding.web.dto.Item;
 import com.github.supercoding.web.dto.ItemBody;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ElectronicStoreController {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final ElectronicStoreItemService electronicStoreItemService; //@RequiredArgsConstructor로 생성자 따로 코드 작성 없이 Bean 주입 가능
 
 //    public ElectronicStoreController(ElectronicStoreItemService electronicStoreItemService) {
@@ -22,7 +26,10 @@ public class ElectronicStoreController {
 
     @GetMapping("/items")
     public List<Item> findAllItem(){
-        return electronicStoreItemService.findAllItems();
+        logger.info("GET /items 요청이 들어왔습니다.");
+        List<Item> items = electronicStoreItemService.findAllItems();
+        logger.info("GET /items 응답: "+items);
+        return items;
     }
 
     @GetMapping("/items/{id}")
