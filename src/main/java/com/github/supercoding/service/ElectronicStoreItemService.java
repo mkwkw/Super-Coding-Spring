@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,5 +150,15 @@ public class ElectronicStoreItemService {
     public List<Item> findItemsOrderByPrice(Integer maxValue) {
         List<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findItemEntitiesByPriceLessThanEqualOrderByPriceAsc(maxValue);
         return itemEntities.stream().map(ItemMapper.INSTANCE::itemEntityToItem).collect(Collectors.toList());
+    }
+
+    public Page<Item> findAllWithPageable(Pageable pageable) {
+        Page<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findAll(pageable); //기본 제공
+        return itemEntities.map(ItemMapper.INSTANCE::itemEntityToItem);
+    }
+
+    public Page<Item> findAllWithPageable(List<String> types, Pageable pageable) {
+        Page<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findAllByTypeIn(types, pageable); //레포지토리에 따로 정의
+        return itemEntities.map(ItemMapper.INSTANCE::itemEntityToItem);
     }
 }

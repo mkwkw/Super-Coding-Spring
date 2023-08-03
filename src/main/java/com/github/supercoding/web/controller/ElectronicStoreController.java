@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -91,6 +93,20 @@ public class ElectronicStoreController {
             @RequestParam("max") Integer maxValue){ //items-query?id=1
 
         return electronicStoreItemService.findItemsOrderByPrice(maxValue);
+    }
+
+    // /items-page?size=5&page=0 자동으로 형식 지원 - param으로 추가하지 않음.
+    @ApiOperation("pagination 지원")
+    @GetMapping("/items-page")
+    public Page<Item> findItemsPagination(Pageable pageable){
+        return electronicStoreItemService.findAllWithPageable(pageable);
+    }
+
+    // /items-types-page?type=스마트폰&size=8&page=0
+    @ApiOperation("pagination 지원2")
+    @GetMapping("/items-types-page")
+    public Page<Item> findItemsPagination(@RequestParam("type") List<String> types, Pageable pageable){
+        return electronicStoreItemService.findAllWithPageable(types, pageable);
     }
 
     @ApiOperation("item 등록")

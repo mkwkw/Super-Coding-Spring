@@ -1,6 +1,8 @@
 package com.github.supercoding.repository.items;
 
 import com.github.supercoding.web.dto.Item;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,7 @@ public interface ElectronicStoreItemJpaRepository extends JpaRepository<ItemEnti
     List<ItemEntity> findItemEntitiesByTypeIn(List<String> types);
 
     List<ItemEntity> findItemEntitiesByPriceLessThanEqualOrderByPriceAsc(Integer maxValue);
+
+    Page<ItemEntity> findAllByTypeIn(List<String> types, Pageable pageable);
+
 }
