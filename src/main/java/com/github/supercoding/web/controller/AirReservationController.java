@@ -8,6 +8,7 @@ import com.github.supercoding.web.dto.airline.ReservationRequest;
 import com.github.supercoding.web.dto.airline.ReservationResult;
 import com.github.supercoding.web.dto.airline.Ticket;
 import com.github.supercoding.web.dto.airline.TicketResponse;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,36 +26,23 @@ public class AirReservationController {
     private final AirReservationService airReservationService;
 
     @GetMapping("/tickets")
-    public ResponseEntity findAirlineTickets(@RequestParam("user-Id") Integer userId,
+    public TicketResponse findAirlineTickets(@RequestParam("user-Id") Integer userId,
 
                                              @RequestParam("airline-ticket-type") String ticketType ){
-        try{
+
             List<Ticket> tickets = airReservationService.findUserFavoritePlaceTickets(userId, ticketType);
-            TicketResponse ticketResponse = new TicketResponse(tickets);
-            return new ResponseEntity(ticketResponse, HttpStatus.OK);
-        }
-        catch (InvalidValueException e){
-            log.error("client 요청에 문제가 있어 다음과 같이 출력합니다."+e.getMessage());
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        catch (NotFoundException e){
-            log.error("client 요청 이후에 문제가 있어 다음과 같이 출력합니다."+e.getMessage());
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+            return new TicketResponse(tickets);
+
+        //NotAcceptException, NotFoundException 발생하면 ExceptionControllerAdvice가 처리할 것이다!
     }
+
+    @ApiOperation("User와 Ticket ID로 예약 진행")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/reservations")
-    public ResponseEntity makeReservation(@RequestBody ReservationRequest reservationRequest) {
-        try {
-            ReservationResult reservationResult = airReservationService.makeReservation(reservationRequest);
-            return new ResponseEntity(reservationResult, HttpStatus.CREATED);
-        }
-        catch (NotFoundException e){
-            log.error("client 요청 이후에 문제가 있어 다음과 같이 출력합니다."+e.getMessage());
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-        catch (NotAcceptException e){
-            log.error("client 요청이 거부됩니다."+e.getMessage());
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
-        }
+    public ReservationResult makeReservation(@RequestBody ReservationRequest reservationRequest) {
+
+        return airReservationService.makeReservation(reservationRequest);
+
+        //NotAcceptException, NotFoundException 발생하면 ExceptionControllerAdvice가 처리할 것이다!
     }
 }
