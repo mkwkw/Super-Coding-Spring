@@ -1,13 +1,19 @@
 package com.github.supercoding.service;
 
+import com.github.supercoding.repository.items.ElectronicStoreItemJpaRepository;
 import com.github.supercoding.repository.items.ElectronicStoreItemRepository;
 import com.github.supercoding.repository.items.ItemEntity;
 import com.github.supercoding.repository.storeSales.StoreSalesEntity;
+import com.github.supercoding.repository.storeSales.StoreSalesJpaRepository;
 import com.github.supercoding.repository.storeSales.StoreSalesRepository;
+import com.github.supercoding.service.exception.NotAcceptException;
+import com.github.supercoding.service.exception.NotFoundException;
 import com.github.supercoding.service.mapper.ItemMapper;
 import com.github.supercoding.web.dto.BuyOrder;
 import com.github.supercoding.web.dto.Item;
 import com.github.supercoding.web.dto.ItemBody;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -27,8 +33,11 @@ public class ElectronicStoreItemService {
     //@Slf4j로 생성, log.info(), log.error() 등으로 사용
     //private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final ElectronicStoreItemRepository electronicStoreItemRepository;
-    private final StoreSalesRepository storeSalesRepository;
+    //private final ElectronicStoreItemRepository electronicStoreItemRepository;
+    //private final StoreSalesRepository storeSalesRepository;
+
+    private final ElectronicStoreItemJpaRepository electronicStoreItemJpaRepository;
+    private final StoreSalesJpaRepository storeSalesJpaRepository;
 
 //    public ElectronicStoreItemService(ElectronicStoreItemRepository electronicStoreItemRepository, StoreSalesRepository storeSalesRepository) {
 //        this.electronicStoreItemRepository = electronicStoreItemRepository;
@@ -36,22 +45,27 @@ public class ElectronicStoreItemService {
 //    }
 
     public List<Item> findAllItems() {
-        List<ItemEntity> itemEntities = electronicStoreItemRepository.findAllItems();
+        List<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findAll();
+        //List<ItemEntity> itemEntities = electronicStoreItemRepository.findAllItems();
         //return itemEntities.stream().map(Item::new).collect(Collectors.toList()); //ItemEntity->Item
         return itemEntities.stream().map(ItemMapper.INSTANCE::itemEntityToItem).collect(Collectors.toList()); //ItemEntity->Item
     }
 
     public Item findItemById(String id){
-        ItemEntity itemFounded = electronicStoreItemRepository.findItemById(id);
+        Integer idInt = Integer.parseInt(id);
+        ItemEntity itemFounded = electronicStoreItemJpaRepository.findById(idInt)
+                .orElseThrow(()->new NotFoundException("id로 item을 찾을 수 없습니다."));
+        //ItemEntity itemFounded = electronicStoreItemRepository.findItemById(id);
         //return new Item(itemFounded);
         Item item = ItemMapper.INSTANCE.itemEntityToItem(itemFounded);
         return item;
     }
 
-    public List<Item> findItemsByIds(List<String> ids){
+    public List<Item> findItemsByIds(List<Integer> ids){
         List<Item> items = new ArrayList<>();
-        for(String id : ids){
-            Item item = ItemMapper.INSTANCE.itemEntityToItem(electronicStoreItemRepository.findItemById(id));
+        for(Integer id : ids){
+            Item item = ItemMapper.INSTANCE.itemEntityToItem(electronicStoreItemJpaRepository.findById(id)
+                    .orElseThrow(()->new NotFoundException("id로 item을 찾을 수 없습니다.")));
             items.add(item);
         }
 
@@ -59,26 +73,35 @@ public class ElectronicStoreItemService {
     }
 
     public Integer saveItem(ItemBody itemBody){
-        ItemEntity itemEntity = new ItemEntity(null, itemBody.getName(), itemBody.getType(), itemBody.getPrice(),
-                itemBody.getSpec().getCpu(), itemBody.getSpec().getCapacity());
-        electronicStoreItemRepository.saveItem(itemEntity);
-        return itemEntity.getId();
+        ItemEntity itemEntity = ItemMapper.INSTANCE.idAndItemBodyToItem(null, itemBody);
+        ItemEntity itemEntityCreated;
+
+        try{
+            itemEntityCreated = electronicStoreItemJpaRepository.save(itemEntity);
+        }
+        catch (RuntimeException e){
+            throw new NotAcceptException("Item을 저장하는 도중에 에러가 발생했습니다.");
+        }
+        //electronicStoreItemRepository.saveItem(itemEntity);
+        return itemEntityCreated.getId();
     }
 
     public void deleteItem(String id) {
         Integer idInt = Integer.parseInt(id);
-        electronicStoreItemRepository.deleteItem(idInt);
+        electronicStoreItemJpaRepository.deleteById(idInt);
     }
 
+    @Transactional(transactionManager = "tmJpa1")
     public Item updateItem(String id, ItemBody itemBody) {
         Integer idInt = Integer.valueOf(id);
         ItemEntity itemEntity = new ItemEntity(idInt, itemBody.getName(), itemBody.getType(), itemBody.getPrice(), itemBody.getSpec().getCpu(), itemBody.getSpec().getCpu());
-        ItemEntity itemEntityUpdated = electronicStoreItemRepository.updateItemEntity(idInt, itemEntity);
-        Item itemUpdated = ItemMapper.INSTANCE.itemEntityToItem(itemEntityUpdated);
-        return itemUpdated;
+        ItemEntity itemEntityUpdated = electronicStoreItemJpaRepository.findById(idInt)
+                .orElseThrow(()-> new NotFoundException("id로 item을 찾을 수 없습니다."));
+        itemEntityUpdated.setItemBody(itemBody);
+        return ItemMapper.INSTANCE.itemEntityToItem(itemEntityUpdated);
     }
 
-    @Transactional(transactionManager = "tm1")
+    @Transactional(transactionManager = "tmJpa1")
     public Integer buyItems(BuyOrder buyOrder){
         // 1. BuyOrder 에서 상품 ID와 수량을 얻어낸다.
         // 2. 상품을 조회하여 수량이 얼마나 있는 지 확인한다.
@@ -90,7 +113,8 @@ public class ElectronicStoreItemService {
         Integer itemId = buyOrder.getItemId();
         Integer itemNums = buyOrder.getItemNums();
 
-        ItemEntity itemEntity = electronicStoreItemRepository.findItemById(String.valueOf(itemId));
+        ItemEntity itemEntity = electronicStoreItemJpaRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("id로 item을 찾을 수 없습니다."));
         if(itemEntity.getStoreId()==null) throw new RuntimeException("매장을 찾을 수 없습니다.");
         if(itemEntity.getStock()<=0) {
             log.error("재고가 없습니다.");
@@ -105,12 +129,24 @@ public class ElectronicStoreItemService {
         Integer totalPrice = possibleBuyItemNums*itemEntity.getPrice();
 
         //Item 재고 감소
-        electronicStoreItemRepository.updateItemStock(itemId, itemEntity.getStock() - possibleBuyItemNums);
+        itemEntity.setStock(itemEntity.getStock() - possibleBuyItemNums);
 
         //매장 매상 추가
-        StoreSalesEntity storeSales = storeSalesRepository.findStoreSalesById(itemEntity.getStoreId());
-        storeSalesRepository.updateSalesAmount(itemEntity.getStoreId(), storeSales.getAmount()+totalPrice);
+        StoreSalesEntity storeSales = storeSalesJpaRepository.findById(itemEntity.getStoreId())
+                .orElseThrow(() -> new NotFoundException("store id를 찾을 수 없습니다."));
+        storeSales.setAmount(storeSales.getAmount()+totalPrice);
 
         return possibleBuyItemNums;
+    }
+
+    public List<Item> findItemsByTypes(List<String> types) {
+        List<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findItemEntitiesByTypeIn(types);
+        return itemEntities.stream().map(ItemMapper.INSTANCE::itemEntityToItem).collect(Collectors.toList());
+
+    }
+
+    public List<Item> findItemsOrderByPrice(Integer maxValue) {
+        List<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findItemEntitiesByPriceLessThanEqualOrderByPriceAsc(maxValue);
+        return itemEntities.stream().map(ItemMapper.INSTANCE::itemEntityToItem).collect(Collectors.toList());
     }
 }

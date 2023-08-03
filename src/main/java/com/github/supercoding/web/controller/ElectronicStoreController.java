@@ -63,7 +63,7 @@ public class ElectronicStoreController {
     @GetMapping("/items-queries")
     public List<Item> findItemByQueryIds(
             @ApiParam(name = "ids", value = "item IDs", example = "[1,2,3]")
-            @RequestParam("id") List<String> ids){ //items-queries?id=1&id=2&id=3
+            @RequestParam("id") List<Integer> ids){ //items-queries?id=1&id=2&id=3
 
 
 //        Set<String> idSet = ids.stream().collect(Collectors.toSet());
@@ -73,6 +73,24 @@ public class ElectronicStoreController {
 //                .collect(Collectors.toList());
 
         return electronicStoreItemService.findItemsByIds(ids);
+    }
+
+    @ApiOperation("여러 개의 item types로 검색 - 쿼리 스트링")
+    @GetMapping("/items-types")
+    public List<Item> findItemByTypes(
+            @ApiParam(name = "type", value = "item types", example = "['노트북','스마트폰']")
+            @RequestParam("type") List<String> types){ //items-types?type=1&type=2&type=3
+
+        return electronicStoreItemService.findItemsByTypes(types);
+    }
+
+    @ApiOperation("item price로 검색 - 쿼리 스트링")
+    @GetMapping("/items-price")
+    public List<Item> findItemByPrice(
+            @ApiParam(name = "price", value = "item price", example = "1000")
+            @RequestParam("max") Integer maxValue){ //items-query?id=1
+
+        return electronicStoreItemService.findItemsOrderByPrice(maxValue);
     }
 
     @ApiOperation("item 등록")
