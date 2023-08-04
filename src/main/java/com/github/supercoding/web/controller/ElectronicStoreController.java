@@ -1,9 +1,10 @@
 package com.github.supercoding.web.controller;
 
 import com.github.supercoding.service.ElectronicStoreItemService;
-import com.github.supercoding.web.dto.BuyOrder;
-import com.github.supercoding.web.dto.Item;
-import com.github.supercoding.web.dto.ItemBody;
+import com.github.supercoding.web.dto.item.BuyOrder;
+import com.github.supercoding.web.dto.item.Item;
+import com.github.supercoding.web.dto.item.ItemBody;
+import com.github.supercoding.web.dto.item.StoreInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -156,5 +157,11 @@ public class ElectronicStoreController {
     public String buyItem(@RequestBody BuyOrder buyOrder){
         Integer orderItemNums = electronicStoreItemService.buyItems(buyOrder);
         return "요청하신 Item 중 "+orderItemNums+"개를 구매하였습니다.";
+    }
+
+    @ApiOperation("전체 stores 정보 검색")
+    @GetMapping("/stores")
+    public List<StoreInfo> findAllStoreInfo(){
+        return electronicStoreItemService.findAllStoreInfo();
     }
 }

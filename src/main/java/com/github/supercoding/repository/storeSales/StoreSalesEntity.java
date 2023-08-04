@@ -1,8 +1,10 @@
 package com.github.supercoding.repository.storeSales;
 
+import com.github.supercoding.repository.items.ItemEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -26,4 +28,6 @@ public class StoreSalesEntity {
     @Column(name = "amount", nullable = false, columnDefinition = "DEFAULT 0 CHECK(amount) >= 0")
     private Integer amount;
 
+    @OneToMany(mappedBy = "storeSales", fetch = FetchType.LAZY)
+    private List<ItemEntity> itemEntities;
 }

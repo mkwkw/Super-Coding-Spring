@@ -1,23 +1,18 @@
 package com.github.supercoding.service;
 
 import com.github.supercoding.repository.items.ElectronicStoreItemJpaRepository;
-import com.github.supercoding.repository.items.ElectronicStoreItemRepository;
 import com.github.supercoding.repository.items.ItemEntity;
 import com.github.supercoding.repository.storeSales.StoreSalesEntity;
 import com.github.supercoding.repository.storeSales.StoreSalesJpaRepository;
-import com.github.supercoding.repository.storeSales.StoreSalesRepository;
 import com.github.supercoding.service.exception.NotAcceptException;
 import com.github.supercoding.service.exception.NotFoundException;
 import com.github.supercoding.service.mapper.ItemMapper;
-import com.github.supercoding.web.dto.BuyOrder;
-import com.github.supercoding.web.dto.Item;
-import com.github.supercoding.web.dto.ItemBody;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.github.supercoding.web.dto.item.BuyOrder;
+import com.github.supercoding.web.dto.item.Item;
+import com.github.supercoding.web.dto.item.ItemBody;
+import com.github.supercoding.web.dto.item.StoreInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -159,5 +154,13 @@ public class ElectronicStoreItemService {
     public Page<Item> findAllWithPageable(List<String> types, Pageable pageable) {
         Page<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findAllByTypeIn(types, pageable); //레포지토리에 따로 정의
         return itemEntities.map(ItemMapper.INSTANCE::itemEntityToItem);
+    }
+
+    @Transactional(transactionManager = "tmJpa1")
+    public List<StoreInfo> findAllStoreInfo() {
+        List<StoreSalesEntity> storeSales = storeSalesJpaRepository.findAllFetchJoin();
+        List<StoreInfo> storeInfos = storeSales.stream().map(StoreInfo::new).collect(Collectors.toList());
+
+        return storeInfos;
     }
 }
