@@ -1,56 +1,27 @@
 package com.github.supercoding.repository.passenger;
 
+import com.github.supercoding.repository.users.UserEntity;
+import lombok.*;
+
+import javax.persistence.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "passengerId")
+@Builder
+@Entity
+@Table(name = "passenger")
 public class Passenger {
+    @Id
+    @Column(name = "passenger_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer passengerId;
-    private Integer userId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    private UserEntity user;
+
+    @Column(name = "passport_num", length = 50)
     private String passportNum;
-
-    public Passenger(Integer passengerId, Integer userId, String passportNum) {
-        this.passengerId = passengerId;
-        this.userId = userId;
-        this.passportNum = passportNum;
-    }
-
-    public Integer getPassengerId() {
-        return passengerId;
-    }
-
-    public void setPassengerId(Integer passengerId) {
-        this.passengerId = passengerId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getPassportNum() {
-        return passportNum;
-    }
-
-    public void setPassportNum(String passportNum) {
-        this.passportNum = passportNum;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Passenger)) {
-            return false;
-        }
-
-        Passenger passenger = (Passenger) o;
-
-        return passengerId.equals(passenger.passengerId);
-    }
-
-    @Override
-    public int hashCode() {
-        return passengerId.hashCode();
-    }
 }

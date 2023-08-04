@@ -117,7 +117,7 @@ public class ElectronicStoreItemService {
 
         ItemEntity itemEntity = electronicStoreItemJpaRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("id로 item을 찾을 수 없습니다."));
-        if(itemEntity.getStoreId()==null) throw new RuntimeException("매장을 찾을 수 없습니다.");
+        if(itemEntity.getStoreSales().isEmpty()) throw new RuntimeException("매장을 찾을 수 없습니다.");
         if(itemEntity.getStock()<=0) {
             log.error("재고가 없습니다.");
             throw new RuntimeException("상품의 재고가 없습니다.");
@@ -134,8 +134,7 @@ public class ElectronicStoreItemService {
         itemEntity.setStock(itemEntity.getStock() - possibleBuyItemNums);
 
         //매장 매상 추가
-        StoreSalesEntity storeSales = storeSalesJpaRepository.findById(itemEntity.getStoreId())
-                .orElseThrow(() -> new NotFoundException("store id를 찾을 수 없습니다."));
+        StoreSalesEntity storeSales = itemEntity.getStoreSales().orElseThrow(() -> new NotFoundException("store id를 찾을 수 없습니다."));
         storeSales.setAmount(storeSales.getAmount()+totalPrice);
 
         return possibleBuyItemNums;

@@ -9,6 +9,7 @@ import com.github.supercoding.web.dto.airline.ReservationResult;
 import com.github.supercoding.web.dto.airline.Ticket;
 import com.github.supercoding.web.dto.airline.TicketResponse;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,5 +45,14 @@ public class AirReservationController {
         return airReservationService.makeReservation(reservationRequest);
 
         //NotAcceptException, NotFoundException 발생하면 ExceptionControllerAdvice가 처리할 것이다!
+    }
+
+    @ApiOperation("userId의 예약한 항공편과 수수료 총합")
+    @GetMapping("/users-sum-price")
+    public Double findUserFlightPrice(
+            @ApiParam(name = "user-Id", value = "유저 ID", example = "1") @RequestParam("user-id") Integer userId
+    ){
+        Double sum = airReservationService.findUserFlightSumPrice(userId);
+        return sum;
     }
 }
