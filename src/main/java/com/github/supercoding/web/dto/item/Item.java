@@ -1,10 +1,8 @@
-package com.github.supercoding.web.dto;
+package com.github.supercoding.web.dto.item;
 
 import com.github.supercoding.repository.items.ItemEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-
-import java.util.Objects;
 
 @Getter
 @Setter

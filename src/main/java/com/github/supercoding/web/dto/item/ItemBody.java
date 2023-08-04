@@ -1,4 +1,4 @@
-package com.github.supercoding.web.dto;
+package com.github.supercoding.web.dto.item;
 
 import lombok.Data;
 import lombok.Getter;
