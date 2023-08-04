@@ -26,6 +26,8 @@ public interface TicketMapper {
     //Custom 함수
     @Named("convert")
     static String localDateTimeToString(LocalDateTime localDateTime){
-        return formatter.format(localDateTime);
+        if(localDateTime != null) return formatter.format(localDateTime);
+        else return null;
     }
+
 }
