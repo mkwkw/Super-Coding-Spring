@@ -4,10 +4,7 @@ import com.github.supercoding.service.AirReservationService;
 import com.github.supercoding.service.exception.InvalidValueException;
 import com.github.supercoding.service.exception.NotAcceptException;
 import com.github.supercoding.service.exception.NotFoundException;
-import com.github.supercoding.web.dto.airline.ReservationRequest;
-import com.github.supercoding.web.dto.airline.ReservationResult;
-import com.github.supercoding.web.dto.airline.Ticket;
-import com.github.supercoding.web.dto.airline.TicketResponse;
+import com.github.supercoding.web.dto.airline.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +51,11 @@ public class AirReservationController {
     ){
         Double sum = airReservationService.findUserFlightSumPrice(userId);
         return sum;
+    }
+
+    @ApiOperation("user id, ticket id에 해당하는 항공권 결제")
+    @PostMapping("/payments")
+    public String payTickets(@RequestBody PaymentRequest paymentRequest){
+        return "요청하신 결제 중 "+airReservationService.payTickets(paymentRequest)+"건 진행완료 되었습니다.";
     }
 }

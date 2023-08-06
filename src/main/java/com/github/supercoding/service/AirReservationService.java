@@ -20,6 +20,7 @@ import com.github.supercoding.service.exception.InvalidValueException;
 import com.github.supercoding.service.exception.NotAcceptException;
 import com.github.supercoding.service.exception.NotFoundException;
 import com.github.supercoding.service.mapper.TicketMapper;
+import com.github.supercoding.web.dto.airline.PaymentRequest;
 import com.github.supercoding.web.dto.airline.ReservationRequest;
 import com.github.supercoding.web.dto.airline.ReservationResult;
 import com.github.supercoding.web.dto.airline.Ticket;
@@ -127,5 +128,42 @@ public class AirReservationService {
         Double chargeSum = flightPriceAndCharges.stream().mapToDouble(FlightPriceAndCharge::getCharge).sum();
         //3. 두 개의 합을 다시 구하고 리턴
         return flightSum+chargeSum;
+    }
+
+    @Transactional(transactionManager = "tmJpa2")
+    public Integer payTickets(PaymentRequest paymentRequest) {
+
+        Integer paymentSuccessCnt = 0;
+        List<Integer> userIds = paymentRequest.getUserIds();
+        List<Integer> ticketIds = paymentRequest.getAirlineTicketIds();
+
+        if(userIds.size()!=ticketIds.size()){
+            throw new RuntimeException("userIds의 길이와 airlineTicketIds의 길이는 같아야합니다.");
+        }
+
+        List<Integer> passengerIds = new ArrayList<>();
+        for(Integer userId : userIds){
+            passengerIds.add(passengerJpaRepository.findPassengerByUserUserId(userId).orElseThrow(()->new RuntimeException("userId에 해당하는 passenger를 찾을 수 없습니다.")).getPassengerId());
+        }
+
+        List<Reservation> reservationList = new ArrayList<>();
+        for(int i=0; i<passengerIds.size(); i++){
+            Integer passengerId = passengerIds.get(i);
+            Integer ticketId = ticketIds.get(i);
+
+            Reservation reservation = reservationJpaRepository.findByPassengerPassengerIdAndAirlineTicketTicketId(passengerId, ticketId);
+            reservationList.add(reservation);
+        }
+
+        for(Reservation reservation : reservationList){
+            if(reservation == null) continue;
+            if(reservation.getReservationStatus().equals("확정")) continue;
+
+            reservation.setReservationStatus("확정");
+            reservationJpaRepository.save(reservation);
+            paymentSuccessCnt++;
+        }
+
+        return paymentSuccessCnt;
     }
 }
