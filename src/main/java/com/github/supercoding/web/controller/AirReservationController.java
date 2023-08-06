@@ -23,10 +23,10 @@ public class AirReservationController {
 
     private final AirReservationService airReservationService;
 
+    @ApiOperation("userId와 ticketType으로 사용자의 선호 목적지에 해당하는 항공편 찾기")
     @GetMapping("/tickets")
-    public TicketResponse findAirlineTickets(@RequestParam("user-Id") Integer userId,
-
-                                             @RequestParam("airline-ticket-type") String ticketType ){
+    public TicketResponse findAirlineTickets(@ApiParam(name = "사용자 id", value = "user id", example = "123")@RequestParam("user-Id") Integer userId,
+                                             @ApiParam(name = "항공권 타입", value = "airline ticket type", example = "왕복, 편도 중 하나")@RequestParam("airline-ticket-type") String ticketType ){
 
             List<Ticket> tickets = airReservationService.findUserFavoritePlaceTickets(userId, ticketType);
             return new TicketResponse(tickets);
@@ -56,6 +56,7 @@ public class AirReservationController {
     @ApiOperation("user id, ticket id에 해당하는 항공권 결제")
     @PostMapping("/payments")
     public String payTickets(@RequestBody PaymentRequest paymentRequest){
+        log.info("결제 성공한 건수만 출력");
         return "요청하신 결제 중 "+airReservationService.payTickets(paymentRequest)+"건 진행완료 되었습니다.";
     }
 }

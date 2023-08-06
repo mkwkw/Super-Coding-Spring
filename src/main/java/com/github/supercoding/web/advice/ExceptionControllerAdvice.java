@@ -30,6 +30,7 @@ public class ExceptionControllerAdvice {
         return nae.getMessage();
     }
 
+    //전역적으로 BadRequestException 발생하면 ExceptionControllerAdvice가 처리할 것이다!
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidValueException.class)
     public String handlerInvalidValueException(InvalidValueException ive){

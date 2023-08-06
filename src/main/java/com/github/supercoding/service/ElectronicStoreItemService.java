@@ -85,7 +85,12 @@ public class ElectronicStoreItemService {
 
     public void deleteItem(String id) {
         Integer idInt = Integer.parseInt(id);
-        electronicStoreItemJpaRepository.deleteById(idInt);
+        try {
+            electronicStoreItemJpaRepository.deleteById(idInt);
+        }
+        catch (RuntimeException e){
+            throw new NotFoundException("Item id를 찾을 수 없습니다.");
+        }
     }
 
     @Transactional(transactionManager = "tmJpa1")
