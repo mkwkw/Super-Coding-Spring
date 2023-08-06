@@ -2,10 +2,15 @@ package com.github.supercoding.service;
 
 import com.github.supercoding.repository.airline_ticket.AirlineTicket;
 import com.github.supercoding.repository.airline_ticket.AirlineTicketJpaRepository;
+import com.github.supercoding.repository.flight.Flight;
+import com.github.supercoding.repository.passenger.Passenger;
+import com.github.supercoding.repository.passenger.PassengerJpaRepository;
+import com.github.supercoding.repository.reservations.ReservationJpaRepository;
 import com.github.supercoding.repository.users.UserEntity;
 import com.github.supercoding.repository.users.UserJpaRepository;
 import com.github.supercoding.service.exception.InvalidValueException;
 import com.github.supercoding.service.exception.NotFoundException;
+import com.github.supercoding.web.dto.airline.ReservationRequest;
 import com.github.supercoding.web.dto.airline.Ticket;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.relational.core.sql.In;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +43,12 @@ class AirReservationServiceUnitTest {
 
     @Mock
     private AirlineTicketJpaRepository airlineTicketJpaRepository;
+
+    @Mock
+    private PassengerJpaRepository passengerJpaRepository;
+
+    @Mock
+    private ReservationJpaRepository reservationJpaRepository;
 
     @InjectMocks
     private AirReservationService airReservationService;
@@ -193,6 +206,47 @@ class AirReservationServiceUnitTest {
         //then
         assertThrows(NotFoundException.class,
                 () -> airReservationService.findUserFavoritePlaceTickets(userId, ticketType));
+    }
+
+    @DisplayName("userId로 passenger를 못 찾는 경우")
+    @Test
+    void findPassengerByUserId(){
+        //given
+        Integer userId = 5;
+        Integer ticketId = 5;
+        ReservationRequest reservationRequest = new ReservationRequest(userId, ticketId);
+
+        AirlineTicket airlineTicket = AirlineTicket.builder()
+                .ticketType("왕복")
+                .arrivalLocation("런던")
+                .departureLocation("서울")
+                .departureAt(LocalDateTime.now())
+                .returnAt(LocalDateTime.now())
+                .ticketId(ticketId)
+                .tax(0.0)
+                .totalPrice(10.0)
+                .build();
+
+        List<Flight> flightList = Arrays.asList(
+                new Flight(1, airlineTicket, LocalDateTime.now(), LocalDateTime.now(), "서울", "파리", 20000.0, 5000.0),
+                new Flight(2, airlineTicket, LocalDateTime.now(), LocalDateTime.now(), "서울", "파리", 20000.0, 5000.0),
+                new Flight(3, airlineTicket, LocalDateTime.now(), LocalDateTime.now(), "서울", "파리", 20000.0, 5000.0),
+                new Flight(4, airlineTicket, LocalDateTime.now(), LocalDateTime.now(), "서울", "파리", 20000.0, 5000.0),
+                new Flight(5, airlineTicket, LocalDateTime.now(), LocalDateTime.now(), "서울", "파리", 20000.0, 5000.0),
+                new Flight(6, airlineTicket, LocalDateTime.now(), LocalDateTime.now(), "서울", "파리", 20000.0, 5000.0)
+        );
+
+        airlineTicket.setFlights(flightList);
+
+        Passenger passenger = null;
+
+        //when
+        when(airlineTicketJpaRepository.findById(any())).thenReturn(Optional.ofNullable(airlineTicket));
+        when(passengerJpaRepository.findPassengerByUserUserId(userId)).thenReturn(Optional.ofNullable(passenger));
+        when(reservationJpaRepository.save(any())).thenReturn(null);
+
+        //then
+        assertThrows(NotFoundException.class, () -> airReservationService.makeReservation(reservationRequest));
     }
 
 }

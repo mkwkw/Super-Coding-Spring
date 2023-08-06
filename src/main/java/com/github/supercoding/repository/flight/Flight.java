@@ -1,10 +1,7 @@
 package com.github.supercoding.repository.flight;
 
 import com.github.supercoding.repository.airline_ticket.AirlineTicket;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -13,6 +10,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
