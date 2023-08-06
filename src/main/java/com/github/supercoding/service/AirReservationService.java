@@ -20,10 +20,9 @@ import com.github.supercoding.service.exception.InvalidValueException;
 import com.github.supercoding.service.exception.NotAcceptException;
 import com.github.supercoding.service.exception.NotFoundException;
 import com.github.supercoding.service.mapper.TicketMapper;
-import com.github.supercoding.web.dto.airline.PaymentRequest;
-import com.github.supercoding.web.dto.airline.ReservationRequest;
-import com.github.supercoding.web.dto.airline.ReservationResult;
-import com.github.supercoding.web.dto.airline.Ticket;
+import com.github.supercoding.web.dto.airline.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,5 +164,10 @@ public class AirReservationService {
         }
 
         return paymentSuccessCnt;
+    }
+
+    public Page<FlightInfo> findFlightWithTicketTypeAndPageable(String ticketType, Pageable pageable) {
+        Page<Flight> flightPage = flightJpaRepository.findAllByAirlineTicketTicketType(ticketType, pageable);
+        return flightPage.map(TicketMapper.INSTANCE::flightToFlightInfo);
     }
 }

@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,5 +60,11 @@ public class AirReservationController {
     public String payTickets(@RequestBody PaymentRequest paymentRequest){
         log.info("결제 성공한 건수만 출력");
         return "요청하신 결제 중 "+airReservationService.payTickets(paymentRequest)+"건 진행완료 되었습니다.";
+    }
+
+    @ApiOperation("항공권의 타입에 따라 달라지는 Pageable한 API")
+    @GetMapping("/flight-pageable")
+    public Page<FlightInfo> findFlightWithTicketType(@RequestParam("type") String ticketType, Pageable pageable){
+        return airReservationService.findFlightWithTicketTypeAndPageable(ticketType, pageable);
     }
 }

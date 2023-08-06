@@ -1,6 +1,8 @@
 package com.github.supercoding.service.mapper;
 
 import com.github.supercoding.repository.airline_ticket.AirlineTicket;
+import com.github.supercoding.repository.flight.Flight;
+import com.github.supercoding.web.dto.airline.FlightInfo;
 import com.github.supercoding.web.dto.airline.Ticket;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,5 +31,9 @@ public interface TicketMapper {
         if(localDateTime != null) return formatter.format(localDateTime);
         else return null;
     }
+
+    @Mapping(target = "departAt", source = "departAt", qualifiedByName = "convert")
+    @Mapping(target = "arrivalAt", source = "arrivalAt", qualifiedByName = "convert")
+    FlightInfo flightToFlightInfo(Flight flight);
 
 }
