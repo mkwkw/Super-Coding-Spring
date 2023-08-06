@@ -7,6 +7,7 @@ import com.github.supercoding.service.exception.NotFoundException;
 import com.github.supercoding.web.dto.airline.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/v1/api/air-reservation")
@@ -66,5 +68,11 @@ public class AirReservationController {
     @GetMapping("/flight-pageable")
     public Page<FlightInfo> findFlightWithTicketType(@RequestParam("type") String ticketType, Pageable pageable){
         return airReservationService.findFlightWithTicketTypeAndPageable(ticketType, pageable);
+    }
+
+    @ApiOperation("user의 예약한 항공편들의 목적지들이 어떤 게 있는지 반환하는 API")
+    @GetMapping("/username-arrival-location")
+    public List<String> findArrivalPlaceByUserName(@RequestParam("username") String userName){
+        return airReservationService.findArrivalPlaceByUserName(userName);
     }
 }

@@ -170,4 +170,8 @@ public class AirReservationService {
         Page<Flight> flightPage = flightJpaRepository.findAllByAirlineTicketTicketType(ticketType, pageable);
         return flightPage.map(TicketMapper.INSTANCE::flightToFlightInfo);
     }
+
+    public List<String> findArrivalPlaceByUserName(String userName) {
+        return reservationJpaRepository.findArrivalLocationByUserName(userName);
+    }
 }
