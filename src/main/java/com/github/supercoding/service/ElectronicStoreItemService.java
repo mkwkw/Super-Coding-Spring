@@ -13,6 +13,8 @@ import com.github.supercoding.web.dto.item.ItemBody;
 import com.github.supercoding.web.dto.item.StoreInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,7 @@ public class ElectronicStoreItemService {
 //        this.storeSalesRepository = storeSalesRepository;
 //    }
 
+    @Cacheable(value = "items", key = "#root.methodName")
     public List<Item> findAllItems() {
         List<ItemEntity> itemEntities = electronicStoreItemJpaRepository.findAll();
         //List<ItemEntity> itemEntities = electronicStoreItemRepository.findAllItems();
@@ -48,6 +51,7 @@ public class ElectronicStoreItemService {
         return itemEntities.stream().map(ItemMapper.INSTANCE::itemEntityToItem).collect(Collectors.toList()); //ItemEntity->Item
     }
 
+    @Cacheable(value = "items", key = "#id")
     public Item findItemById(String id){
         Integer idInt = Integer.parseInt(id);
         ItemEntity itemFounded = electronicStoreItemJpaRepository.findById(idInt)
@@ -69,6 +73,7 @@ public class ElectronicStoreItemService {
         return items;
     }
 
+    @CacheEvict(value = "items", allEntries = true)
     public Integer saveItem(ItemBody itemBody){
         ItemEntity itemEntity = ItemMapper.INSTANCE.idAndItemBodyToItem(null, itemBody);
         ItemEntity itemEntityCreated;
@@ -83,6 +88,7 @@ public class ElectronicStoreItemService {
         return itemEntityCreated.getId();
     }
 
+    @CacheEvict(value = "items", allEntries = true)
     public void deleteItem(String id) {
         Integer idInt = Integer.parseInt(id);
         try {
@@ -103,6 +109,7 @@ public class ElectronicStoreItemService {
         return ItemMapper.INSTANCE.itemEntityToItem(itemEntityUpdated);
     }
 
+    @CacheEvict(value = "items", allEntries = true)
     @Transactional(transactionManager = "tmJpa1")
     public Integer buyItems(BuyOrder buyOrder){
         // 1. BuyOrder 에서 상품 ID와 수량을 얻어낸다.
