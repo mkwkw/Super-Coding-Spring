@@ -4,3 +4,6 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+jwt:
+  secret:
+    key: supercoding #연습용 - 실제로는 GitHub에 올라가면 안됨.
