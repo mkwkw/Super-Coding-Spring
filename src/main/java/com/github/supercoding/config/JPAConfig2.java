@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = {"com.github.supercoding.repository.airline_ticket", "com.github.supercoding.repository.flight", "com.github.supercoding.repository.passenger", "com.github.supercoding.repository.reservations", "com.github.supercoding.repository.users"},
+        basePackages = {"com.github.supercoding.repository.airline_ticket", "com.github.supercoding.repository.flight", "com.github.supercoding.repository.passenger", "com.github.supercoding.repository.reservations", "com.github.supercoding.repository.users", "com.github.supercoding.repository.userPrincipal", "com.github.supercoding.repository.roles"},
         //여러 개의 데이터소스를 사용하기 때문에 아래의 코드 작성 필요
         //em 이름, tm 이름
         entityManagerFactoryRef = "entityManagerFactoryBean2",
@@ -29,7 +29,7 @@ public class JPAConfig2 {
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean2(@Qualifier("dataSource2") DataSource dataSource){
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("com.github.supercoding.repository.airline_ticket", "com.github.supercoding.repository.flight", "com.github.supercoding.repository.passenger", "com.github.supercoding.repository.reservations", "com.github.supercoding.repository.users");
+        em.setPackagesToScan("com.github.supercoding.repository.airline_ticket", "com.github.supercoding.repository.flight", "com.github.supercoding.repository.passenger", "com.github.supercoding.repository.reservations", "com.github.supercoding.repository.users", "com.github.supercoding.repository.userPrincipal", "com.github.supercoding.repository.roles");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
